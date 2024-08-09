@@ -80,7 +80,7 @@
 							<li><a href="menu">Menu</a></li>
 							<li class="has-dropdown">
 								<a href="gallery">Gallery</a>
-								
+
 							</li>
 							<li><a href="reservation">Reservation</a></li>
 							<li><a href="about">About</a></li>
