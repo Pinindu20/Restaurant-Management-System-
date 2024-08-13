@@ -71,201 +71,206 @@
 	<div class="fh5co-loader"></div>
 
 	<div id="page">
-	<nav class="fh5co-nav" role="navigation">
-		<!-- <div class="top-menu"> -->
-			<div class="container">
-				<div class="row">
-					<div class="col-xs-12 text-center logo-wrap">
-						<div id="fh5co-logo"><a href="/"> <em>Hungry Birds Restaurent</em><span>.</span></a></div>
-					</div>
-					<div class="col-xs-12 text-center menu-1 menu-wrap">
-						<ul>
-							<li><a href="/">Home</a></li>
-							<li><a href="menu">Menu</a></li>
-							<li class="has-dropdown">
-								<a href="gallery">Gallery</a>
-								{{-- <ul class="dropdown">
-									<li><a href="#">Events</a></li>
-									<li><a href="#">Food</a></li>
-									<li><a href="#">Coffees</a></li>
-								</ul> --}}
-							</li>
-							<li class="active"><a href="reservation">Reservation</a></li>
-							<li><a href="about">About</a></li>
-							<li><a href="contact">Contact</a></li>
+        <nav class="fh5co-nav" role="navigation">
+            <!-- <div class="top-menu"> -->
+                <div class="container">
+                    <div class="row">
+                        <div class="col-xs-12 text-center logo-wrap">
+                            <div id="fh5co-logo"><a href="/"> <em>Hungry Birds Restaurent</em><span>.</span></a></div>
+                        </div>
+                        <div class="col-xs-12 text-center menu-1 menu-wrap">
+                            <ul>
+                                <li><a href="/">Home</a></li>
+                                <li><a href="menu">Menu</a></li>
+                                <li class="has-dropdown">
+                                    <a href="gallery">Gallery</a>
+                                    {{-- <ul class="dropdown">
+                                        <li><a href="#">Events</a></li>
+                                        <li><a href="#">Food</a></li>
+                                        <li><a href="#">Coffees</a></li>
+                                    </ul> --}}
+                                </li>
+                                <li class="active"><a href="reservation">Reservation</a></li>
+                                <li><a href="about">About</a></li>
+                                <li><a href="contact">Contact</a></li>
 
-                            <li>
-                                @auth
+                                <li>
+                                    @auth
 
-                                <a href="{{url('/showcart', Auth::user()->id)}}">
+                                    <a href="{{url('/showcart', Auth::user()->id)}}">
+
+                                        <button class="btn btn-outline" type="submit" style="font-size: 1.5rem; padding: 3px 8px;">
+                                            <i class="fas fa-shopping-cart me-1" style="font-size: 1.2rem;"></i>
+                                            Cart
+                                            <span class="badge bg-white text-black ms-1 rounded-pill" style="font-size: 1.2rem; padding: 2px 6px; font-family: 'Arial', sans-serif; font-weight: bold;">{{$count}}</span>
+                                        </button>
+
+                                    </a>
+
+                                    @endauth
+
+                                    @guest
 
                                     <button class="btn btn-outline" type="submit" style="font-size: 1.5rem; padding: 3px 8px;">
                                         <i class="fas fa-shopping-cart me-1" style="font-size: 1.2rem;"></i>
                                         Cart
-                                        <span class="badge bg-white text-black ms-1 rounded-pill" style="font-size: 1.2rem; padding: 2px 6px; font-family: 'Arial', sans-serif; font-weight: bold;">{{$count}}</span>
+                                        <span class="badge bg-white text-black ms-1 rounded-pill" style="font-size: 1.2rem; padding: 2px 6px; font-family: 'Arial', sans-serif; font-weight: bold;">0</span>
                                     </button>
 
-                                </a>
+                                    @endguest
+                                </li>
 
-                                @endauth
+                                <li>
 
-                                @guest
+                                    @if (Route::has('login'))
+                                    <div class="sm:fixed sm:top-0 sm:right-0 p-6 text-right">
+                                        @auth
+                                            <li>
 
-                                <button class="btn btn-outline" type="submit" style="font-size: 1.5rem; padding: 3px 8px;">
-                                    <i class="fas fa-shopping-cart me-1" style="font-size: 1.2rem;"></i>
-                                    Cart
-                                    <span class="badge bg-white text-black ms-1 rounded-pill" style="font-size: 1.2rem; padding: 2px 6px; font-family: 'Arial', sans-serif; font-weight: bold;">0</span>
-                                </button>
+                                            <x-app-layout>
 
-                                @endguest
+                                            </x-app-layout>
+
+                                            </li>
+                                        @else
+                                            <a href="{{ route('login') }}" class="font-semibold text-gray-600 hover:text-gray-900 focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Log in</a>
+
+                                            @if (Route::has('register'))
+                                                <a href="{{ route('register') }}" class="ml-4 font-semibold text-gray-600 hover:text-gray-900 focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Register</a>
+                                            @endif
+                                        @endauth
+                                    </div>
+                                @endif
+
                             </li>
 
-                            <li>
+                            </ul>
+                        </div>
+                    </div>
 
-                                @if (Route::has('login'))
-                                   <div class="sm:fixed sm:top-0 sm:right-0 p-6 text-right">
-                                       @auth
-                                           <li>
+                </div>
+            <!-- </div> -->
+        </nav>
 
-                                           <x-app-layout>
-
-                                           </x-app-layout>
-
-                                           </li>
-                                       @else
-                                           <a href="{{ route('login') }}" class="font-semibold text-gray-600 hover:text-gray-900 focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Log in</a>
-
-                                           @if (Route::has('register'))
-                                               <a href="{{ route('register') }}" class="ml-4 font-semibold text-gray-600 hover:text-gray-900 focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Register</a>
-                                           @endif
-                                       @endauth
-                                   </div>
-                               @endif
-
-                           </li>
-
-						</ul>
-					</div>
-				</div>
-
-			</div>
-		<!-- </div> -->
-	</nav>
-
-	<header id="fh5co-header" class="fh5co-cover js-fullheight" role="banner" style="background-image: url(images/hero_1.jpeg);" data-stellar-background-ratio="0.5">
-		<div class="overlay"></div>
-		<div class="container">
-			<div class="row">
-				<div class="col-md-12 text-center">
-					<div class="display-t js-fullheight">
-						<div class="display-tc js-fullheight animate-box" data-animate-effect="fadeIn">
-							<h1>Reserved a Table Today!</h1>
-
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</header>
-
-
-	<div id="fh5co-reservation-form" class="fh5co-section">
-		<div class="container">
-			<div class="row">
-				<div class="col-md-12 fh5co-heading animate-box">
-					<h2>Reservation</h2>
-					<div class="row">
-						<div class="col-md-6">
-							<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis ab debitis sit itaque totam, a maiores nihil, nulla magnam porro minima officiis! Doloribus aliquam voluptates corporis et tempora consequuntur ipsam, itaque, nesciunt similique commodi omnis. Ad magni perspiciatis, voluptatum repellat.</p>
-						</div>
-					</div>
-				</div>
-
-
-				<div class="row">
-					<div class="col-md-12 fh5co-heading animate-box">
-						<h2 align="center">Reserve Your Table here</h2>
-						<div class="row">
-                            @foreach ($data as $data)
-
-							<div class="col-md-3">
-                                <div class="table_img">
-								    <img width="100%" src="/table/{{$data->image}}" alt="">
-                                </div>
-
-                                <div class="couple_table"  style="text-align: center">
-                                    <h3 style="color: rgb(226, 226, 226); text-align:center">{{$data->table_title}}</h3>
-                                    <p>{!! Str::limit($data->description,100)!!}</p>
-                                    <a class="btn btn-primary" href="{{url('table_details',$data->id)}}"> Table Details </a>
-                                </div>
+        <header id="fh5co-header" class="fh5co-cover js-fullheight" role="banner" style="background-image: url(images/hero_1.jpeg);" data-stellar-background-ratio="0.5">
+            <div class="overlay"></div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <div class="display-t js-fullheight">
+                            <div class="display-tc js-fullheight animate-box" data-animate-effect="fadeIn">
+                                <h1>Reserved a Table Today!</h1>
 
                             </div>
-
-                            @endforeach
-						</div>
-					</div>
-				</div>
-
-
-
-				{{-- <div class="row">
-					<div class="col-md-12 fh5co-heading animate-box">
-						<h2 align="center"> Family tables(3-4 people)</h2>
-						<div class="row">
-							<div class="col-md-3">
-								<img width="100%" src="{{asset('images/gallery_1.jpeg')}}" alt="">
-							</div>
-
-							<div class="col-md-3">
-								<img width="100%" src="{{asset('images/gallery_2.jpeg')}}" alt="">
-							</div>
-
-							<div class="col-md-3">
-								<img width="100%" src="{{asset('images/gallery_3.jpeg')}}" alt="">
-							</div>
-
-							<div class="col-md-3">
-								<img width="100%" src="{{asset('images/gallery_4.jpeg')}}" alt="">
-							</div>
-
-						</div>
-					</div>
-				</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
 
 
+        @if(Auth::id())
+
+
+		<div id="fh5co-reservation-form" class="fh5co-section">
+			<div class="container">
 				<div class="row">
+
 					<div class="col-md-12 fh5co-heading animate-box">
-						<h2 align="center">Large Group tables(7+ people)</h2>
+						<h2>Reservation</h2>
 						<div class="row">
-							<div class="col-md-3">
-								<img width="100%" src="{{asset('images/gallery_1.jpeg')}}" alt="">
+							<div class="col-md-6">
+								<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis ab debitis sit itaque totam, a maiores nihil, nulla magnam porro minima officiis! Doloribus aliquam voluptates corporis et tempora consequuntur ipsam, itaque, nesciunt similique commodi omnis. Ad magni perspiciatis, voluptatum repellat.</p>
 							</div>
-
-							<div class="col-md-3">
-								<img width="100%" src="{{asset('images/gallery_2.jpeg')}}" alt="">
-							</div>
-
-							<div class="col-md-3">
-								<img width="100%" src="{{asset('images/gallery_3.jpeg')}}" alt="">
-							</div>
-
-							<div class="col-md-3">
-								<img width="100%" src="{{asset('images/gallery_4.jpeg')}}" alt="">
-							</div>
-
 						</div>
 					</div>
+
+
+
+
+                        <div class="row">
+
+                            <h2 align="center"; style="color: white">Reserve Your Table here</h2></br>
+
+                            @for ($i = 0; $i <count($data); $i++)
+
+
+                                <div class="col-md-3">
+
+
+                                    <div class="table_img">
+                                        <img width="100%" src="/table/{{$data[$i]->image}}" alt="">
+                                    </div>
+
+                                    <div class="couple_table"  style="text-align: center">
+                                        <h3 style="color: rgb(226, 226, 226); text-align:center">{{$data[$i]->table_title}}</h3>
+                                        <p>{!! Str::limit($data[$i]->description,80)!!}</p>
+                                        <a class="btn btn-primary" href="{{url('table_details',$data[$i]->id)}}"> Table Details </a>
+                                    </div>
+
+                                    @if ($i==3)
+                                        </br></br>
+                                    @endif
+
+                                </div>
+                            @endfor
+                        </div>
+
 				</div>
-
-			</div> --}}
-
-
-
-
-
-
-
+			</div>
 		</div>
+
+        @else
+
+
+        <div id="fh5co-reservation-form" class="fh5co-section">
+            <div class="container">
+                <div class="row">
+
+                    <div class="col-md-12 fh5co-heading animate-box">
+                        <h2>Reservation</h2>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis ab debitis sit itaque totam, a maiores nihil, nulla magnam porro minima officiis! Doloribus aliquam voluptates corporis et tempora consequuntur ipsam, itaque, nesciunt similique commodi omnis. Ad magni perspiciatis, voluptatum repellat.</p>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                        <h2 align="center">Reserve Your Table here</h2>
+
+                        <div class="row">
+
+							@foreach ($data as $data)
+
+							<div class="col-md-3">
+
+								<div class="table_img">
+									<img width="100%" src="/table/{{$data->image}}" alt="">
+								</div>
+
+								<div class="couple_table"  style="text-align: center">
+									<h3 style="color: rgb(226, 226, 226); text-align:center">{{$data->table_title}}</h3>
+									<p>{!! Str::limit($data->description,80)!!}</p>
+									<a class="btn btn-primary" href="{{url('table_details',$data->id)}}"> Table Details </a>
+								</div>
+
+							</div>
+
+							@endforeach
+
+						</div>
+                </div>
+            </div>
+        </div>
+
+
+        @endif
+
+
+
+
 	</div>
 
 	<div id="fh5co-featured-testimony" class="fh5co-section">

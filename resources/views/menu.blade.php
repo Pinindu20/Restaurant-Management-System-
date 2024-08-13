@@ -194,12 +194,22 @@
 					<div class="fh5co-item">
 						<img src="/foodimage/{{$data->image}}" class="img-responsive" alt="Free Restaurant Bootstrap Website Template by FreeHTML5.co">
 						<h3> {{$data->title}} </h3>
-						<span class="fh5co-price">{{$data->price}}<sup>.50</sup></span>
-						<p>{{$data->description}}</p>
+						<span class="fh5co-price">{{$data->price}}$</span>
+						<p style="color: rgb(241, 236, 236)">{{$data->description}}</p>
 					</div>
 
-					<input type="number" name="quantity" min="1" value="1" style="width: 80px; color: black">
-					<input type="submit" value="add cart" style="color: black">
+					<input type="number" name="quantity" min="1" value="1" style="width: 80px; font-size: 100%; color: black">
+
+                    @if(Auth::id())
+
+                    <input type="submit" value="Add Cart" style="color: black; font-weight: bold; background-color: white; padding: 3px">
+
+                    @else
+
+                        <input type="submit" value="Add Cart" style="color: black; font-weight: bold">
+
+                    @endif
+
 				</div>
 
                 @else
@@ -208,12 +218,23 @@
 					<div class="fh5co-item margin_top">
 						<img src="/foodimage/{{$data->image}}" class="img-responsive" alt="Free Restaurant Bootstrap Website Template by FreeHTML5.co">
 						<h3> {{$data->title}} </h3>
-						<span class="fh5co-price">{{$data->price}}<sup>.50</sup></span>
-						<p>{{$data->description}}</p>
+						<span class="fh5co-price">{{$data->price}}$</span>
+						<p style="color: rgb(241, 236, 236)">{{$data->description}}</p>
 					</div>
 
-					<input type="number" name="quantity" min="1" value="1" style="width: 80px; color: black">
-					<input type="submit" value="add cart" style="color: black">
+					<input type="number" name="quantity" min="1" value="1" style="width: 80px; font-size: 100%; color: black">
+
+
+                    @if(Auth::id())
+
+                        <input type="submit" value="Add Cart" style="color: black; font-weight: bold; background-color: white; padding: 3px">
+
+                    @else
+
+                        <input type="submit" value="Add Cart" style="color: black; font-weight: bold">
+
+                    @endif
+
 				</div>
 
                 @endif

@@ -91,20 +91,20 @@
 									<li><a href="#">Coffees</a></li>
 								</ul> --}}
 							</li>
-							<li><a href="reservation">Reservation</a></li>
+							<li class="active"><a href="reservation">Reservation</a></li>
 							<li><a href="about.html">About</a></li>
 							<li><a href="contact.html">Contact</a></li>
 
-                            <li class="active">
+                            <li>
                                 @auth
 
                                 <a href="{{url('/showcart', Auth::user()->id)}}">
 
-                                <button class="btn-outline" type="submit">
-                                    <i class="fas fa-shopping-cart me-1"></i>
-                                    Cart
-                                    <span class="badge bg-dark text-white ms-1 rounded-pill">  {{$count}} </span>
-                                </button>
+                                    <button class="btn btn-outline" type="submit" style="font-size: 1.5rem; padding: 3px 8px;">
+                                        <i class="fas fa-shopping-cart me-1" style="font-size: 1.2rem;"></i>
+                                        Cart
+                                        <span class="badge bg-white text-black ms-1 rounded-pill" style="font-size: 1.2rem; padding: 2px 6px; font-family: 'Arial', sans-serif; font-weight: bold;">{{$count}}</span>
+                                    </button>
 
                                 </a>
 
@@ -112,10 +112,10 @@
 
                                 @guest
 
-                                <button class="btn-outline" type="submit">
-                                    <i class="fas fa-shopping-cart me-1"></i>
+                                <button class="btn btn-outline" type="submit" style="font-size: 1.5rem; padding: 3px 8px;">
+                                    <i class="fas fa-shopping-cart me-1" style="font-size: 1.2rem;"></i>
                                     Cart
-                                    <span class="badge bg-dark text-white ms-1 rounded-pill"> 0 </span>
+                                    <span class="badge bg-white text-black ms-1 rounded-pill" style="font-size: 1.2rem; padding: 2px 6px; font-family: 'Arial', sans-serif; font-weight: bold;">0</span>
                                 </button>
 
                                 @endguest
