@@ -63,6 +63,8 @@
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
+
+
 	</head>
 	<body>
 
@@ -92,7 +94,7 @@
 							<li><a href="about.html">About</a></li>
 							<li><a href="contact.html">Contact</a></li>
 
-                            <li class="active">
+                            {{-- <li class="active">
                                 @auth
 
                                 <a href="{{url('/showcart', Auth::user()->id)}}">
@@ -116,7 +118,38 @@
                                 </button>
 
                                 @endguest
+                            </li> --}}
+
+
+
+                            <li>
+                                @auth
+
+                                <a href="{{url('/showcart', Auth::user()->id)}}">
+
+                                    <button class="btn btn-outline" type="submit" style="font-size: 1.5rem; padding: 3px 8px;">
+                                        <i class="fas fa-shopping-cart me-1" style="font-size: 1.2rem;"></i>
+                                        Cart
+                                        <span class="badge bg-white text-black ms-1 rounded-pill" style="font-size: 1.2rem; padding: 2px 6px; font-family: 'Arial', sans-serif; font-weight: bold;">{{$count}}</span>
+                                    </button>
+
+                                </a>
+
+                                @endauth
+
+                                @guest
+
+                                <button class="btn btn-outline" type="submit" style="font-size: 1.5rem; padding: 3px 8px;">
+                                    <i class="fas fa-shopping-cart me-1" style="font-size: 1.2rem;"></i>
+                                    Cart
+                                    <span class="badge bg-white text-black ms-1 rounded-pill" style="font-size: 1.2rem; padding: 2px 6px; font-family: 'Arial', sans-serif; font-weight: bold;">0</span>
+                                </button>
+
+                                @endguest
                             </li>
+
+
+
 
                             <li><a href="{{url('show_order')}}">Orders</a></li>
 
@@ -157,13 +190,15 @@
     <div id="fh5co-about" >
 
 		<div class="row">
-			<div class="col-md-6" style="width: calc(60%);">
-				<table align="right" bgcolor="white">
+			<div class="col-md-6" style="width: calc(70%);">
+				<table style="margin-top: 30px;" align="right" bgcolor="white">
 
-					<tr>
-						<th style="padding: 30px"> Food name </th>
-						<th style="padding: 30px"> Price </th>
-						<th style="padding: 30px"> Quantity </th>
+					<tr >
+                        <th width="60%" style="padding: 30px; text-align: center;"> Food image </th>
+						<th width="20%" style="padding: 30px;"> Food name </th>
+						<th width="20%" style="padding: 30px;"> Unit Price </th>
+						<th style="padding: 30px;"> Quantity </th>
+                        <th style="padding: 30px;"> Total </th>
 
 					</tr>
 
@@ -173,17 +208,25 @@
 
 					@foreach ($data as $data)
 					<tr align="center">
-						<td style="padding: 10px;">
+
+                        <td style="padding: 10px;">
+                            <img width="40%" height="40%" src="/foodimage/{{$data->image}}" alt="">
+                        </td>
+						<td style="padding: 10px; ">
                             <input type="text" name="foodname[]" value="{{$data->title}}" hidden="">
                             {{$data->title}}
                         </td>
-						<td style="padding: 10px;">
+						<td style="padding: 10px; ">
                             <input type="text" name="price[]" value="{{$data->price}}" hidden="">
-                            {{$data->price}}
+                            {{$data->price}}$
                         </td>
-						<td style="padding: 10px;">
+						<td style="padding: 10px; ">
                             <input type="text" name="quantity[]" value="{{$data->quantity}}" hidden="">
                             {{$data->quantity}}
+                        </td>
+                        <td style="padding: 10px; ">
+                            <input type="text" name="total[]" value="{{$data->quantity * $data->price}}" hidden="">
+                            {{$data->quantity * $data->price}}$
                         </td>
 
 					</tr>
@@ -193,15 +236,14 @@
 				</table>
 			</div>
 
-			<div class="col-md-6" style="width: calc(40%);">
-				<table>
-
-					<tr><th style="padding: 30px"> Action </th></tr>
+			<div class="col-md-6" style="width: calc(30%);">
+				<table style="margin-top: 30px;">
+					<tr><th style="padding: 30px; text-align: center"> Action </th></tr>
 
 					@foreach ($data2 as $data2)
 
 					<tr align="center">
-						<td><a href="{{url('/remove',$data2->id)}}" class="btn btn-warning"> Remove </a></td>
+						<td style="padding: 37px;"><a href="{{url('/remove',$data2->id)}}" class="btn btn-primary" > Remove </a></td>
 					</tr>
 
 					@endforeach
@@ -214,7 +256,7 @@
 		<div class="row">
 			<div class="col-mid-12" align="center" style="padding: 10px">
 
-				<button class="btn btn-primary" type="button" id="order"> Order Now </button>
+				<button class="btn btn-warning" style="color: black; font-weight: 500" type="button" id="order"> Order Now </button>
 
 			</div>
 
@@ -227,7 +269,7 @@
 
 				<div style="padding: 10px">
 					<label> Phone </label>
-					<input style="border-radius:20px; height:50px; width:300px; font-size:20px" class="form-control" type="number" name="phone" placeholder="Phone Number">
+					<input style="border-radius:20px; height:50px; width:300px; font-size:20px" class="form-control" type="text" name="phone" placeholder="Phone Number">
 				</div>
 
 				<div style="padding: 10px">
@@ -235,9 +277,14 @@
 					<input style="border-radius:20px; height:50px; width:300px; font-size:20px" class="form-control" type="text" name="address" placeholder="Addresss">
 				</div>
 
+                <div style="padding: 10px">
+                    <label for="readonlyInput"> Sub Total </label>
+                    <input style="border-radius:20px; height:50px; width:300px; font-size:20px; color: black" class="form-control" type="text" name="sub" id="readonlyInput" readonly>
+                </div>
+
 				<div style="padding: 10px">
-					<input class="btn btn-success" type="submit" value="Order Confirm">
-                    <button id="close" type="button" class="btn btn-danger">Close</button>
+					<input style="color: black; font-weight: 500" class="btn btn-success" type="submit" value="Order Confirm">
+                    <button style="color: black; font-weight: 500" id="close" type="button" class="btn btn-danger">Close</button>
 				</div>
 
 			</div>
@@ -343,6 +390,31 @@
 		);
 
 	</script>
+
+
+    <script>
+        document.getElementById('order').addEventListener('click', function() {
+            // Show the order confirmation form
+            document.getElementById('appear').style.display = 'block';
+
+            // Calculate the subtotal
+            var totalInputs = document.getElementsByName('total[]');
+            var subtotal = 0;
+            for (var i = 0; i < totalInputs.length; i++) {
+                subtotal += parseFloat(totalInputs[i].value);
+            }
+
+            // Set the subtotal in the readonly input field
+            document.getElementById('readonlyInput').value = subtotal.toFixed(2) + '$';
+        });
+
+        document.getElementById('close').addEventListener('click', function() {
+            // Hide the order confirmation form
+            document.getElementById('appear').style.display = 'none';
+        });
+    </script>
+
+
 
 	<!-- jQuery -->
 	<script src="js/jquery.min.js"></script>
