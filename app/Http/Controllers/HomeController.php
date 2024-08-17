@@ -117,20 +117,43 @@ class HomeController extends Controller
 
             $foodid=$id;
 
-            $quantity=$request->quantity;
-
-            $cart=new cart;
-
-            $cart->user_id=$user_id;
-
-            $cart->food_id=$foodid;
-
-            $cart->quantity=$quantity;
-
-            $cart->save();
+            $food_exist_id = Cart::where('food_id','=',$id)->where('user_id','=',$user_id)->get('id')->first();
 
 
-            return redirect()->back();
+            if($food_exist_id)
+            {
+
+                $cart=Cart::find($food_exist_id)->first();
+
+                $quantity=$cart->quantity;
+
+                $cart->quantity=$quantity + $request->quantity;
+
+                $cart->save();
+
+                return redirect()->back()->with('message','Food Added Successfully');
+
+            }
+            else
+            {
+
+                $quantity=$request->quantity;
+
+                $cart=new cart;
+
+                $cart->user_id=$user_id;
+
+                $cart->food_id=$foodid;
+
+                $cart->quantity=$quantity;
+
+                $cart->save();
+
+
+                return redirect()->back()->with('message','Food Added Successfully');
+
+            }
+
         }
 
         else
@@ -171,38 +194,6 @@ class HomeController extends Controller
 
         return redirect()->back();
     }
-
-    // public function orderconfirm(Request $request)
-    // {
-
-    //     foreach($request->foodname as $key =>$foodname)
-    //     {
-
-
-    //         $data=new order;
-
-    //         $data->foodname=$foodname;
-
-    //         $data->price=$request->price[$key];
-
-    //         $data->quantity=$request->quantity[$key];
-
-    //         $data->name=$request->name;
-
-    //         $data->phone=$request->phone;
-
-    //         $data->address=$request->address;
-
-    //         $data->save();
-
-
-
-    //     }
-
-    //     return redirect()->back();
-
-    // }
-
 
 
     public function orderconfirm(Request $request)

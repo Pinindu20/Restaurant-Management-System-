@@ -10,6 +10,15 @@
 					</div>
 				</div>
 
+                <div class="col-md-12">
+                @if (session()->has('message'))
+                <div class="alert alert-success">
+                <button type="button" class="close" data-dismiss="alert">X</button>
+                {{session()->get('message')}}
+                </div>
+                @endif
+                </div>
+
                 @foreach ($data as $data)
 
 				<form action="{{url('/addcart',$data->id)}}" method="post">
