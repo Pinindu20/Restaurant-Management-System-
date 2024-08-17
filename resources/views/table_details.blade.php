@@ -40,6 +40,39 @@
 	<link href="https://fonts.googleapis.com/css?family=Cormorant+Garamond:300,300i,400,400i,500,600i,700" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css?family=Satisfy" rel="stylesheet">
 
+
+    <style>
+        .alert-custom {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            position: relative;
+        }
+        .alert-custom .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: white; /* Set the close button color to white */
+        }
+        .text-error {
+            color: red;
+            border-color: red;
+        }
+        .text-success {
+            color: green;
+            border-color: green;
+        }
+    </style>
+
+
+
+
+
 	<!-- Animate.css -->
 	<link rel="stylesheet" href="css/animate.css">
 	<!-- Icomoon Icon Fonts-->
@@ -63,6 +96,8 @@
     LrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 
 	<link rel="stylesheet" href="C:\Users\admin\Desktop\tasty\css\all.min.css">
+
+
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
@@ -188,12 +223,11 @@
                     <div>
 
                         @if (session()->has('message'))
-                        <div class="alert alert-success">
-                        <button type="button" class="close" data-dismiss="alert">X</button>
-                        {{session()->get('message')}}
-                        </div>
+                            <div class="alert-custom {{ session('message_type') == 'error' ? 'text-error' : 'text-success' }}">
+                                <button type="button" class="close" onclick="this.parentElement.style.display='none';">&times;</button>
+                                {{ session()->get('message') }}
+                            </div>
                         @endif
-
 
                     </div>
 

@@ -231,62 +231,131 @@ class HomeController extends Controller
     }
 
 
+
+
+
     public function add_booking(Request $request ,$id)
+{
+    $request->validate([
+        'check_in' => 'required|date_format:h:i A',
+        'check_out' => 'required|date_format:h:i A|after:check_in',
+    ]);
+
+    $data = new Booking();
+
+    $data->table_id = $id;
+    $data->name = $request->name;
+    $data->email = $request->email;
+    $data->phone = $request->phone;
+    $data->date = $request->date;
+
+    $check_in = $request->check_in;
+    $check_out = $request->check_out;
+
+    // Correct logic to check if the table is already booked in the given time period
+    $isBooked = Booking::where('table_id', $id)
+        ->where('date', $request->date)
+        ->where(function($query) use ($check_in, $check_out) {
+            $query->where('check_in', [$check_in])
+                  ->orWhere('check_out', [$check_out])
+                  ->orWhere(function($query) use ($check_in, $check_out) {
+                      $query->where('check_in', '<=', $check_in)
+                            ->where('check_out', '>=', $check_out);
+                  });
+        })
+        ->exists();
+
+    if($isBooked)
     {
-
-        $request->validate([
-            'check_in' => 'required|date_format:h:i A',
-            'check_out' => 'required|date_format:h:i A|after:check_in',
+        return redirect()->back()->with([
+            'message' => 'Table was already booked, please try different time.',
+            'message_type' => 'error'
         ]);
-
-
-        $data = new Booking();
-
-        $data->table_id = $id;
-
-        $data->name = $request->name;
-
-        $data->email = $request->email;
-
-        $data->phone = $request->phone;
-
-        $data->date = $request->date;
-
-
-        $check_in = $request ->check_in;
-
-        $check_out = $request ->check_out;
-
-        $isBooked = Booking::where('table_id',$id)
-        ->where('check_in','<=','check_out')
-        ->where('check_out','<=','check_in')->exists();
-
-        if($isBooked)
-        {
-
-            return redirect()->back()->with('message', 'Table was already booked, please try diffrent time.');
-
-        }
-        else
-        {
-
-
-            $data->check_in = $request->check_in;
-
-            $data->check_out = $request->check_out;
-
-            $data->save();
-
-            return redirect()->back()->with('message', 'Booking added successfully.');
-        }
-
-
-
-
-
-
-
     }
+    else
+    {
+        $data->check_in = $check_in;
+        $data->check_out = $check_out;
+        $data->save();
+
+        return redirect()->back()->with([
+            'message' => 'Booking added successfully.',
+            'message_type' => 'success'
+        ]);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // public function add_booking(Request $request ,$id)
+    // {
+
+    //     $request->validate([
+    //         'check_in' => 'required|date_format:h:i A',
+    //         'check_out' => 'required|date_format:h:i A|after:check_in',
+    //     ]);
+
+
+    //     $data = new Booking();
+
+    //     $data->table_id = $id;
+
+    //     $data->name = $request->name;
+
+    //     $data->email = $request->email;
+
+    //     $data->phone = $request->phone;
+
+    //     $data->date = $request->date;
+
+
+    //     $check_in = $request ->check_in;
+
+    //     $check_out = $request ->check_out;
+
+    //     $isBooked = Booking::where('table_id',$id)
+    //     ->where('check_in','<=','check_out')
+    //     ->where('check_out','<=','check_in')->exists();
+
+    //     if($isBooked)
+    //     {
+
+    //         return redirect()->back()->with('message', 'Table was already booked, please try diffrent time.');
+
+    //     }
+    //     else
+    //     {
+
+
+    //         $data->check_in = $request->check_in;
+
+    //         $data->check_out = $request->check_out;
+
+    //         $data->save();
+
+    //         return redirect()->back()->with('message', 'Booking added successfully.');
+    //     }
+
+    // }
 
 
     public function show_order()
