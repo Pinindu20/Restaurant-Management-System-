@@ -190,7 +190,7 @@
 
                         <div class="row">
 
-                            <h2 align="center"; style="color: white">Reserve Your Table here</h2></br>
+                            <h2 align="center"; style="color: white; font-size: 30px">Reserve Your Table Here...!</h2></br>
 
                             @for ($i = 0; $i <count($data); $i++)
 
@@ -238,7 +238,7 @@
 
 
 
-                        <h2 align="center">Reserve Your Table here</h2>
+                        <h2 align="center" style="color: white">Reserve Your Table Here...!</h2>
 
                         <div class="row">
 

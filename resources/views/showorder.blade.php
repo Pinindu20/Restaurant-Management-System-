@@ -61,6 +61,9 @@
 
 	<link rel="stylesheet" href="C:\Users\admin\Desktop\tasty\css\all.min.css">
 
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 	</head>
@@ -92,16 +95,16 @@
 							<li><a href="about.html">About</a></li>
 							<li><a href="contact.html">Contact</a></li>
 
-                            <li class="active">
+                            <li>
                                 @auth
 
                                 <a href="{{url('/showcart', Auth::user()->id)}}">
 
-                                <button class="btn-outline" type="submit">
-                                    <i class="fas fa-shopping-cart me-1"></i>
-                                    Cart
-                                    <span class="badge bg-dark text-white ms-1 rounded-pill">0</span>
-                                </button>
+                                    <button class="btn btn-outline" type="submit" style="font-size: 1.5rem; padding: 3px 8px;">
+                                        <i class="fas fa-shopping-cart me-1" style="font-size: 1.2rem;"></i>
+                                        Cart
+                                        <span class="badge bg-white text-black ms-1 rounded-pill" style="font-size: 1.2rem; padding: 2px 6px; font-family: 'Arial', sans-serif; font-weight: bold;">0</span>
+                                    </button>
 
                                 </a>
 
@@ -109,16 +112,16 @@
 
                                 @guest
 
-                                <button class="btn-outline" type="submit">
-                                    <i class="fas fa-shopping-cart me-1"></i>
+                                <button class="btn btn-outline" type="submit" style="font-size: 1.5rem; padding: 3px 8px;">
+                                    <i class="fas fa-shopping-cart me-1" style="font-size: 1.2rem;"></i>
                                     Cart
-                                    <span class="badge bg-dark text-white ms-1 rounded-pill"> 0 </span>
+                                    <span class="badge bg-white text-black ms-1 rounded-pill" style="font-size: 1.2rem; padding: 2px 6px; font-family: 'Arial', sans-serif; font-weight: bold;">0</span>
                                 </button>
 
                                 @endguest
                             </li>
 
-                            <li><a href="{{url('show_order')}}">Orders</a></li>
+                            <li class="active"><a href="{{url('show_order')}}">Orders</a></li>
 
 
                             <li>
@@ -157,129 +160,88 @@
     <div id="fh5co-about" >
 
 		<div class="row">
-			<div class="col-md-6" style="width: calc(60%);">
-				<table style="text-align:center; bgcolor:white;">
+            <div class="col-md-12" style="display: flex; justify-content: center; align-items: center; height: 100vh;">
 
-					<tr style="width:100%">
-						<th style="padding: 30px"> Food name </th>
-						<th style="padding: 30px"> Price </th>
-						<th style="padding: 30px"> Quantity </th>
-                        <th style="padding: 30px">Customer name</th>
-                        <th style="padding: 30px">phone</th>
-                        <th style="padding: 30px">Address</th>
-
+                <table style="text-align:center; width: auto;">
+                    <tr style="width:100%; color: white; border: 2px solid white;">
+                        <th style="padding: 30px">Ordered At</th>
+                        <th style="padding: 30px">Food Name</th>
+                        <th style="padding: 30px">Total Price</th>
+                        <th style="padding: 30px">Your Num</th>
+                        <th style="padding: 30px">Order Address</th>
                         <th style="padding: 30px">Bill</th>
+                    </tr>
 
-					</tr>
+                    @php
+                        use Carbon\Carbon;
+                        $groupedData = $data->groupBy(function($item) {
+                            return Carbon::parse($item->created_at)->format('Y-m-d H:i:s');
+                        });
+                    @endphp
+
+                    @foreach ($groupedData as $createdAt => $orders)
+                        @php
+                            $firstOrder = $orders->first();
+                            $totalPrice = $orders->sum(function($order) {
+                                return $order->price * $order->quantity;
+                            });
+                            $createdAtCarbon = Carbon::parse($createdAt);
+                            $isToday = $createdAtCarbon->isToday();
+                        @endphp
+
+                        <tr align="center" style="color: {{ $isToday ? 'skyblue' : '' }}; border: 2px solid white;">
+                            <td style="padding: 10px; border: 2px solid white;" rowspan="{{ $orders->count() }}">
+                                <input type="text" name="date_time[]" value="{{ $createdAt }}" hidden="">
+                                {{ $createdAt }}
+                            </td>
+
+                            <td style="padding: 10px;">
+                                <input type="text" name="foodname[]" value="{{ $firstOrder->foodname }}" hidden="">
+                                {{ $firstOrder->foodname }}
+                            </td>
+
+                            <td style="padding: 10px;">
+                                <input type="text" name="price[]" value="{{ $firstOrder->price }}$ x {{ $firstOrder->quantity }} = {{ $firstOrder->price * $firstOrder->quantity }}$" hidden="">
+                                {{ $firstOrder->price }}$ x {{ $firstOrder->quantity }} = {{ $firstOrder->price * $firstOrder->quantity }}$
+                            </td>
+
+                            <td style="padding: 10px; border: 2px solid white;" rowspan="{{ $orders->count() }}">
+                                <input type="text" name="phone[]" value="{{ $firstOrder->phone }}" hidden="">
+                                {{ $firstOrder->phone }}
+                            </td>
+
+                            <td style="padding: 10px;" rowspan="{{ $orders->count() }}">
+                                <input type="text" name="address[]" value="{{ $firstOrder->address }}" hidden="">
+                                {{ $firstOrder->address }}
+                            </td>
+
+                            <td style="padding: 10px; border: 2px solid white;" rowspan="{{ $orders->count() }}">
+                                <a href="{{ url('/bill', $firstOrder->id) }}">print</a>
+                            </td>
+                        </tr>
+
+                        @foreach ($orders->slice(1) as $order)
+                            <tr align="center" style="color: {{ $isToday ? 'skyblue' : '' }}; border: 2px solid white;">
+                                <td style="padding: 10px;">
+                                    <input type="text" name="foodname[]" value="{{ $order->foodname }}" hidden="">
+                                    {{ $order->foodname }}
+                                </td>
+
+                                <td style="padding: 10px;">
+                                    <input type="text" name="price[]" value="{{ $order->price }}$ x {{ $order->quantity }} = {{ $order->price * $order->quantity }}$" hidden="">
+                                    {{ $order->price }}$ x {{ $order->quantity }} = {{ $order->price * $order->quantity }}$
+                                </td>
+                            </tr>
+                        @endforeach
+                    @endforeach
+                </table>
 
 
-
-
-
-					@foreach ($data as $data)
-					<tr align="center">
-						<td style="padding: 10px;">
-                            <input type="text" name="foodname[]" value="{{$data->foodname}}" hidden="">
-                            {{$data->foodname}}
-                        </td>
-						<td style="padding: 10px;">
-                            <input type="text" name="price[]" value="{{$data->price}}" hidden="">
-                            {{$data->price}}
-                        </td>
-						<td style="padding: 10px;">
-                            <input type="text" name="quantity[]" value="{{$data->quantity}}" hidden="">
-                            {{$data->quantity}}
-                        </td>
-
-                        <td style="padding: 10px;">
-                            <input type="text" name="name[]" value="{{$data->name}}" hidden="">
-                            {{$data->name}}
-                        </td>
-
-                        <td style="padding: 10px;">
-                            <input type="text" name="phone[]" value="{{$data->phone}}" hidden="">
-                            {{$data->phone}}
-                        </td>
-
-                        <td style="padding: 10px;">
-                            <input type="text" name="address[]" value="{{$data->address}}" hidden="">
-                            {{$data->address}}
-                        </td>
-
-                        <td style="padding: 10px;">
-                            <a href="{{url('/bill',$data->id)}}}">print</a>
-                        </td>
-
-
-					</tr>
-
-					@endforeach
-
-				</table>
-			</div>
-
-			{{-- <div class="col-md-6" style="width: calc(40%);">
-				<table>
-
-					<tr><th style="padding: 30px"> Action </th></tr>
-
-					@foreach ($data2 as $data2)
-
-					<tr align="center">
-						<td><a href="{{url('/remove',$data2->id)}}" class="btn btn-warning"> Remove </a></td>
-					</tr>
-
-					@endforeach
-
-				</table>
-			</div> --}}
-
-		</div>
-
-		{{-- <div class="row">
-			<div class="col-mid-12" align="center" style="padding: 10px">
-
-				<button class="btn btn-primary" type="button" id="order"> Order Now </button>
-
-			</div>
-
-			<div id="appear" align="center" style="padding: 10px; display:none;">
-
-				<div style="padding: 10px">
-					<label> Name </label>
-					<input style="border-radius:20px; height:50px; width:300px; font-size:20px" class="form-control" type="text" name="name" placeholder="Name">
-				</div>
-
-				<div style="padding: 10px">
-					<label> Phone </label>
-					<input style="border-radius:20px; height:50px; width:300px; font-size:20px" class="form-control" type="number" name="phone" placeholder="Phone Number">
-				</div>
-
-				<div style="padding: 10px">
-					<label> Address </label>
-					<input style="border-radius:20px; height:50px; width:300px; font-size:20px" class="form-control" type="text" name="address" placeholder="Addresss">
-				</div>
-
-				<div style="padding: 10px">
-					<input class="btn btn-success" type="submit" value="Order Confirm">
-                    <button id="close" type="button" class="btn btn-danger">Close</button>
-				</div>
-
-			</div>
-
-		</div>
+            </div>
+        </div>
 
 
 
-	</div>
- --}}
-
-
-
-
-
-
-    <!-- style="position: relative; top: -190px; right: -365px;" -->
 
 
     <footer id="fh5co-footer" role="contentinfo" class="fh5co-section">
