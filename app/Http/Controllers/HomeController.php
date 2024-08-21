@@ -11,6 +11,7 @@ use App\Models\Cart;
 use App\Models\Order;
 use App\Models\Table;
 use App\Models\Booking;
+use Carbon\Carbon;
 
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -201,12 +202,14 @@ class HomeController extends Controller
         foreach ($request->foodname as $key => $foodname) {
             $data = new Order;
 
+            $data->user_id = auth()->id(); // Associate order with the logged-in user
             $data->foodname = $foodname;
             $data->price = $request->price[$key];
             $data->quantity = $request->quantity[$key];
             $data->name = $request->name;
             $data->phone = $request->phone;
             $data->address = $request->address;
+
 
             $data->save();
         }
@@ -216,6 +219,7 @@ class HomeController extends Controller
 
         return redirect()->back()->with('success', 'Order confirmed and cart cleared.');
     }
+
 
 
 
@@ -235,136 +239,78 @@ class HomeController extends Controller
 
 
     public function add_booking(Request $request ,$id)
-{
-    $request->validate([
-        'check_in' => 'required|date_format:h:i A',
-        'check_out' => 'required|date_format:h:i A|after:check_in',
-    ]);
-
-    $data = new Booking();
-
-    $data->table_id = $id;
-    $data->name = $request->name;
-    $data->email = $request->email;
-    $data->phone = $request->phone;
-    $data->date = $request->date;
-
-    $check_in = $request->check_in;
-    $check_out = $request->check_out;
-
-    // Correct logic to check if the table is already booked in the given time period
-    $isBooked = Booking::where('table_id', $id)
-        ->where('date', $request->date)
-        ->where(function($query) use ($check_in, $check_out) {
-            $query->where('check_in', [$check_in])
-                  ->orWhere('check_out', [$check_out])
-                  ->orWhere(function($query) use ($check_in, $check_out) {
-                      $query->where('check_in', '<=', $check_in)
-                            ->where('check_out', '>=', $check_out);
-                  });
-        })
-        ->exists();
-
-    if($isBooked)
     {
-        return redirect()->back()->with([
-            'message' => 'Table was already booked, please try different time.',
-            'message_type' => 'error'
+        $request->validate([
+            'check_in' => 'required|date_format:h:i A',
+            'check_out' => 'required|date_format:h:i A|after:check_in',
         ]);
+
+        $data = new Booking();
+
+        $data->table_id = $id;
+        $data->name = $request->name;
+        $data->email = $request->email;
+        $data->phone = $request->phone;
+        $data->date = $request->date;
+
+        $check_in = $request->check_in;
+        $check_out = $request->check_out;
+
+        // Correct logic to check if the table is already booked in the given time period
+        $isBooked = Booking::where('table_id', $id)
+            ->where('date', $request->date)
+            ->where(function($query) use ($check_in, $check_out) {
+                $query->where('check_in', [$check_in])
+                    ->orWhere('check_out', [$check_out])
+                    ->orWhere(function($query) use ($check_in, $check_out) {
+                        $query->where('check_in', '<=', $check_in)
+                                ->where('check_out', '>=', $check_out);
+                    });
+            })
+            ->exists();
+
+        if($isBooked)
+        {
+            return redirect()->back()->with([
+                'message' => 'Table was already booked, please try different time.',
+                'message_type' => 'error'
+            ]);
+        }
+        else
+        {
+            $data->check_in = $check_in;
+            $data->check_out = $check_out;
+            $data->save();
+
+            return redirect()->back()->with([
+                'message' => 'Booking added successfully.',
+                'message_type' => 'success'
+            ]);
+        }
     }
-    else
-    {
-        $data->check_in = $check_in;
-        $data->check_out = $check_out;
-        $data->save();
-
-        return redirect()->back()->with([
-            'message' => 'Booking added successfully.',
-            'message_type' => 'success'
-        ]);
-    }
-}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // public function add_booking(Request $request ,$id)
-    // {
-
-    //     $request->validate([
-    //         'check_in' => 'required|date_format:h:i A',
-    //         'check_out' => 'required|date_format:h:i A|after:check_in',
-    //     ]);
-
-
-    //     $data = new Booking();
-
-    //     $data->table_id = $id;
-
-    //     $data->name = $request->name;
-
-    //     $data->email = $request->email;
-
-    //     $data->phone = $request->phone;
-
-    //     $data->date = $request->date;
-
-
-    //     $check_in = $request ->check_in;
-
-    //     $check_out = $request ->check_out;
-
-    //     $isBooked = Booking::where('table_id',$id)
-    //     ->where('check_in','<=','check_out')
-    //     ->where('check_out','<=','check_in')->exists();
-
-    //     if($isBooked)
-    //     {
-
-    //         return redirect()->back()->with('message', 'Table was already booked, please try diffrent time.');
-
-    //     }
-    //     else
-    //     {
-
-
-    //         $data->check_in = $request->check_in;
-
-    //         $data->check_out = $request->check_out;
-
-    //         $data->save();
-
-    //         return redirect()->back()->with('message', 'Booking added successfully.');
-    //     }
-
-    // }
 
 
     public function show_order()
     {
 
-        $data=Order::all();
+        $data = Order::where('user_id', auth()->id())->get(); // Retrieve orders for the logged-in user
+
+        // Set the local time zone to Sri Lankan time
+        $localTimeZone = 'Asia/Colombo';
+
+        // Sort data by created_at in descending order
+        $sortedData = $data->sortByDesc('created_at');
+
+        // Group the data by created_at with timezone adjustment
+        $groupedData = $sortedData->groupBy(function ($item) use ($localTimeZone) {
+            return Carbon::parse($item->created_at)->setTimezone($localTimeZone)->format('Y-m-d H:i:s');
+        });
 
 
-        return view('showorder',compact('data'));
+
+        return view('showorder', compact('data','groupedData'));
     }
 
     public function print($id)

@@ -40,6 +40,8 @@
 	<link href="https://fonts.googleapis.com/css?family=Cormorant+Garamond:300,300i,400,400i,500,600i,700" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css?family=Satisfy" rel="stylesheet">
 
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
 	<!-- Animate.css -->
 	<link rel="stylesheet" href="css/animate.css">
 	<!-- Icomoon Icon Fonts-->
@@ -51,6 +53,99 @@
 
 	<!-- Theme style  -->
 	<link rel="stylesheet" href="css/style.css">
+
+
+    <style>
+
+        .curved-row {
+
+            bottom: -50px; /* Adjust based on desired curve depth */
+            width: 100%;
+            height: 350px; /* Adjust based on desired curve depth */
+            background: #FFECD1;
+			border-radius: 0 0 50% 50%;
+
+        }
+
+		@keyframes panel{
+
+			from{
+				transform: translateY(-300px);
+			}
+			to{
+				transform: translateY(0px);
+			}
+		}
+
+		.pop-up-panal {
+
+			background-color: #7D98A1;
+			text-align: center;
+			margin-top: 150px;
+			padding-top: 10px;
+			padding-bottom: 10px;
+			border-radius: 10px;
+			box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.5);
+
+
+
+			animation-name: panel;
+			animation-duration: 1.5s;
+			animation-fill-mode: forwards;
+			animation-timing-function: cubic-bezier(0.68, -0.6, 0.32, 1.6);
+
+		}
+
+		.pop-up-panal h4 {
+
+			color: rgb(243, 20, 12);
+			font-weight: bold;
+
+		}
+
+		.pop-up-panal p {
+
+			color: black;
+			font-weight: 500;
+
+		}
+
+		.pop-up-panal a {
+
+			background-color: #FCCB06;
+			color: black;
+			font-weight: bold;
+			width: 100%;
+
+		}
+
+
+		@keyframes image{
+
+			from{
+				transform: scale(1.25);
+			}
+			to{
+				transform: scale(1);
+			}
+		}
+
+
+		.pop-up-panal img {
+
+			animation-name: image;
+			animation-duration: 1.2s;
+			animation-delay: 1.5s;
+			animation-iteration-count: infinite;
+			animation-direction: alternate;
+			animation-timing-function: cubic-bezier(.11,-0.2,.97,1.73);
+			margin:auto;
+		}
+
+
+    </style>
+
+
 
 	<!-- Modernizr JS -->
 	<script src="js/modernizr-2.6.2.min.js"></script>
@@ -157,89 +252,116 @@
 	</nav>
 
 
+	@php
+        use Carbon\Carbon;
+    @endphp
+
+
+    @if ($groupedData->isEmpty())
+
+
     <div id="fh5co-about" >
 
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12 curved-row d-flex justify-content-center align-items-center">
+
+                        <div class="col-md-4 pop-up-panal">
+
+                            <img style="border-radius: 10px;" src="{{asset('images/no-order.jpg')}}" alt=""><br>
+
+                            <h4> NO ORDERS FOUND...!</h4><br>
+                            <p>Looks like you haven't made</p> <br> <p style="margin-top: -30px">your order yet.</p><br>
+
+                            <a href="{{url('/showcart', Auth::user()->id)}}" class="btn btn-primary"> Back to Cart </a>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+            </div>
+	</div>
+
+    @else
+
+	<div id="fh5co-about" >
 		<div class="row">
             <div class="col-md-12" style="display: flex; justify-content: center; align-items: center; height: 100vh;">
 
                 <table style="text-align:center; width: auto;">
-                    <tr style="width:100%; color: white; border: 2px solid white;">
-                        <th style="padding: 30px">Ordered At</th>
-                        <th style="padding: 30px">Food Name</th>
-                        <th style="padding: 30px">Total Price</th>
-                        <th style="padding: 30px">Your Num</th>
-                        <th style="padding: 30px">Order Address</th>
-                        <th style="padding: 30px">Bill</th>
-                    </tr>
 
-                    @php
-                        use Carbon\Carbon;
-                        $groupedData = $data->groupBy(function($item) {
-                            return Carbon::parse($item->created_at)->format('Y-m-d H:i:s');
-                        });
-                    @endphp
-
-                    @foreach ($groupedData as $createdAt => $orders)
-                        @php
-                            $firstOrder = $orders->first();
-                            $totalPrice = $orders->sum(function($order) {
-                                return $order->price * $order->quantity;
-                            });
-                            $createdAtCarbon = Carbon::parse($createdAt);
-                            $isToday = $createdAtCarbon->isToday();
-                        @endphp
-
-                        <tr align="center" style="color: {{ $isToday ? 'skyblue' : '' }}; border: 2px solid white;">
-                            <td style="padding: 10px; border: 2px solid white;" rowspan="{{ $orders->count() }}">
-                                <input type="text" name="date_time[]" value="{{ $createdAt }}" hidden="">
-                                {{ $createdAt }}
-                            </td>
-
-                            <td style="padding: 10px;">
-                                <input type="text" name="foodname[]" value="{{ $firstOrder->foodname }}" hidden="">
-                                {{ $firstOrder->foodname }}
-                            </td>
-
-                            <td style="padding: 10px;">
-                                <input type="text" name="price[]" value="{{ $firstOrder->price }}$ x {{ $firstOrder->quantity }} = {{ $firstOrder->price * $firstOrder->quantity }}$" hidden="">
-                                {{ $firstOrder->price }}$ x {{ $firstOrder->quantity }} = {{ $firstOrder->price * $firstOrder->quantity }}$
-                            </td>
-
-                            <td style="padding: 10px; border: 2px solid white;" rowspan="{{ $orders->count() }}">
-                                <input type="text" name="phone[]" value="{{ $firstOrder->phone }}" hidden="">
-                                {{ $firstOrder->phone }}
-                            </td>
-
-                            <td style="padding: 10px;" rowspan="{{ $orders->count() }}">
-                                <input type="text" name="address[]" value="{{ $firstOrder->address }}" hidden="">
-                                {{ $firstOrder->address }}
-                            </td>
-
-                            <td style="padding: 10px; border: 2px solid white;" rowspan="{{ $orders->count() }}">
-                                <a href="{{ url('/bill', $firstOrder->id) }}">print</a>
-                            </td>
+                        <tr style="width:100%; color: white; border: 2px solid white;">
+                            <th style="padding: 30px">Ordered At</th>
+                            <th style="padding: 30px">Food Name</th>
+                            <th style="padding: 30px">Total Price</th>
+                            <th style="padding: 30px">Your Num</th>
+                            <th style="padding: 30px">Order Address</th>
+                            <th style="padding: 30px">Bill</th>
                         </tr>
 
-                        @foreach ($orders->slice(1) as $order)
+                        @foreach ($groupedData as $createdAt => $orders)
+                            @php
+                                $firstOrder = $orders->first();
+                                $totalPrice = $orders->sum(function($order) {
+                                    return $order->price * $order->quantity;
+                                });
+                                $createdAtCarbon = Carbon::parse($createdAt);
+                                $isToday = $createdAtCarbon->isToday();
+                            @endphp
+
                             <tr align="center" style="color: {{ $isToday ? 'skyblue' : '' }}; border: 2px solid white;">
-                                <td style="padding: 10px;">
-                                    <input type="text" name="foodname[]" value="{{ $order->foodname }}" hidden="">
-                                    {{ $order->foodname }}
+                                <td style="padding: 10px; border: 2px solid white;" rowspan="{{ $orders->count() }}">
+                                    <input type="text" name="date_time[]" value="{{ $createdAt }}" hidden="">
+                                    {{ $createdAt }}
                                 </td>
 
                                 <td style="padding: 10px;">
-                                    <input type="text" name="price[]" value="{{ $order->price }}$ x {{ $order->quantity }} = {{ $order->price * $order->quantity }}$" hidden="">
-                                    {{ $order->price }}$ x {{ $order->quantity }} = {{ $order->price * $order->quantity }}$
+                                    <input type="text" name="foodname[]" value="{{ $firstOrder->foodname }}" hidden="">
+                                    {{ $firstOrder->foodname }}
+                                </td>
+
+                                <td style="padding: 10px;">
+                                    <input type="text" name="price[]" value="{{ $firstOrder->price }}$ x {{ $firstOrder->quantity }} = {{ $firstOrder->price * $firstOrder->quantity }}$" hidden="">
+                                    {{ $firstOrder->price }}$ x {{ $firstOrder->quantity }} = {{ $firstOrder->price * $firstOrder->quantity }}$
+                                </td>
+
+                                <td style="padding: 10px; border: 2px solid white;" rowspan="{{ $orders->count() }}">
+                                    <input type="text" name="phone[]" value="{{ $firstOrder->phone }}" hidden="">
+                                    {{ $firstOrder->phone }}
+                                </td>
+
+                                <td style="padding: 10px;" rowspan="{{ $orders->count() }}">
+                                    <input type="text" name="address[]" value="{{ $firstOrder->address }}" hidden="">
+                                    {{ $firstOrder->address }}
+                                </td>
+
+                                <td style="padding: 10px; border: 2px solid white;" rowspan="{{ $orders->count() }}">
+                                    <a href="{{ url('/bill', $firstOrder->id) }}">print</a>
                                 </td>
                             </tr>
+
+                            @foreach ($orders->slice(1) as $order)
+                                <tr align="center" style="color: {{ $isToday ? 'skyblue' : '' }}; border: 2px solid white;">
+                                    <td style="padding: 10px;">
+                                        <input type="text" name="foodname[]" value="{{ $order->foodname }}" hidden="">
+                                        {{ $order->foodname }}
+                                    </td>
+
+                                    <td style="padding: 10px;">
+                                        <input type="text" name="price[]" value="{{ $order->price }}$ x {{ $order->quantity }} = {{ $order->price * $order->quantity }}$" hidden="">
+                                        {{ $order->price }}$ x {{ $order->quantity }} = {{ $order->price * $order->quantity }}$
+                                    </td>
+                                </tr>
+                            @endforeach
                         @endforeach
-                    @endforeach
+
                 </table>
-
-
+                @endif
             </div>
         </div>
-
+	</div>
 
 
 
@@ -303,7 +425,7 @@
 
 		</div>
 	</footer>
-	</div>
+
 
 	<div class="gototop js-top">
 		<a href="#" class="js-gotop"><i class="icon-arrow-up22"></i></a>
