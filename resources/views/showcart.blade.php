@@ -40,6 +40,8 @@
 	<link href="https://fonts.googleapis.com/css?family=Cormorant+Garamond:300,300i,400,400i,500,600i,700" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css?family=Satisfy" rel="stylesheet">
 
+    {{-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"> --}}
+
 	<!-- Animate.css -->
 	<link rel="stylesheet" href="css/animate.css">
 	<!-- Icomoon Icon Fonts-->
@@ -52,6 +54,103 @@
 	<!-- Theme style  -->
 	<link rel="stylesheet" href="css/style.css">
 
+
+    <style>
+
+        .curved-row {
+
+			display: flex;
+			justify-content: center; /* Center horizontally */
+			align-items: center; /* Center vertically */
+			height: 350px; /* Full viewport height */
+			bottom: -50px; /* Adjust based on desired curve depth */
+			width: 100%;
+			background: #FFECD1;
+			border-radius: 0 0 50% 50%;
+
+
+        }
+
+		@keyframes panel{
+
+			from{
+				transform: translateY(-300px);
+			}
+			to{
+				transform: translateY(0px);
+			}
+		}
+
+		.pop-up-panal {
+
+			background-color: #7D98A1;
+			text-align: center;
+			margin-top: 150px;
+			padding-top: 10px;
+			padding-bottom: 10px;
+			border-radius: 10px;
+			box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.5);
+			max-width: 400px;
+			width: 100%;
+
+			animation-name: panel;
+			animation-duration: 1.5s;
+			animation-fill-mode: forwards;
+			animation-timing-function: cubic-bezier(0.68, -0.6, 0.32, 1.6);
+
+		}
+
+		.pop-up-panal h4 {
+
+			color: rgb(243, 20, 12);
+			font-weight: bold;
+
+		}
+
+		.pop-up-panal p {
+
+			color: black;
+			font-weight: 500;
+
+		}
+
+		.pop-up-panal a {
+
+			background-color: #FCCB06;
+			color: black;
+			font-weight: bold;
+			width: 80%;
+
+		}
+
+
+		@keyframes image{
+
+			from{
+				transform: scale(1);
+			}
+			to{
+				transform: scale(0.75);
+			}
+		}
+
+
+		.pop-up-panal img {
+
+			animation-name: image;
+			animation-duration: 1.2s;
+			animation-delay: 1.5s;
+			animation-iteration-count: infinite;
+			animation-direction: alternate;
+			animation-timing-function: cubic-bezier(.11,-0.2,.97,1.73);
+			margin:auto;
+		}
+
+    </style>
+
+
+
+
 	<!-- Modernizr JS -->
 	<script src="js/modernizr-2.6.2.min.js"></script>
 	<!-- FOR IE9 below -->
@@ -62,7 +161,7 @@
 	<link rel="stylesheet" href="C:\Users\admin\Desktop\tasty\css\all.min.css">
 
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> --}}
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
@@ -97,34 +196,6 @@
 							<li><a href="about.html">About</a></li>
 							<li><a href="contact.html">Contact</a></li>
 
-                            {{-- <li class="active">
-                                @auth
-
-                                <a href="{{url('/showcart', Auth::user()->id)}}">
-
-                                <button class="btn-outline" type="submit">
-                                    <i class="fas fa-shopping-cart me-1"></i>
-                                    Cart
-                                    <span class="badge bg-dark text-white ms-1 rounded-pill">  {{$count}} </span>
-                                </button>
-
-                                </a>
-
-                                @endauth
-
-                                @guest
-
-                                <button class="btn-outline" type="submit">
-                                    <i class="fas fa-shopping-cart me-1"></i>
-                                    Cart
-                                    <span class="badge bg-dark text-white ms-1 rounded-pill"> 0 </span>
-                                </button>
-
-                                @endguest
-                            </li> --}}
-
-
-
                             <li>
                                 @auth
 
@@ -150,9 +221,6 @@
 
                                 @endguest
                             </li>
-
-
-
 
                             <li><a href="{{url('show_order')}}">Orders</a></li>
 
@@ -189,114 +257,154 @@
 		<!-- </div> -->
 	</nav>
 
+    @if(count($data) > 0)
+
+    <div id="fh5co-about">
+        <div class="row">
+            <div class="col-md-12" align="center" style="margin-top: 30px;">
+                    <div class="row">
+                        <div class="col-md-6" style="width: calc(70%);">
+                            <table align="right" bgcolor="white">
+                                <tr>
+                                    <th width="60%" style="padding: 30px; text-align: center;">Food image</th>
+                                    <th width="20%" style="padding: 30px;">Food name</th>
+                                    <th width="20%" style="padding: 30px;">Unit Price</th>
+                                    <th style="padding: 30px;">Quantity</th>
+                                    <th style="padding: 30px;">Total</th>
+                                </tr>
+
+                                <form action="{{url('orderconfirm')}}" method="POST">
+                                    @csrf
+                                    @foreach ($data as $item)
+                                    <tr align="center">
+                                        <td style="padding: 10px;">
+                                            <img width="40%" height="40%" src="/foodimage/{{$item->image}}" alt="">
+                                        </td>
+                                        <td style="padding: 10px;">
+                                            <input type="text" name="foodname[]" value="{{$item->title}}" hidden="">
+                                            {{$item->title}}
+                                        </td>
+                                        <td style="padding: 10px;">
+                                            <input type="text" name="price[]" value="{{$item->price}}" hidden="">
+                                            {{$item->price}}$
+                                        </td>
+                                        <td style="padding: 10px;">
+                                            <input type="text" name="quantity[]" value="{{$item->quantity}}" hidden="">
+                                            {{$item->quantity}}
+                                        </td>
+                                        <td style="padding: 10px;">
+                                            <input type="text" name="total[]" value="{{$item->quantity * $item->price}}" hidden="">
+                                            {{$item->quantity * $item->price}}$
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                            </table>
+                        </div>
+
+                        <div class="col-md-6" style="width: calc(30%);">
+                            <table>
+                                <tr><th style="padding: 30px; text-align: center">Action</th></tr>
+
+                                @foreach ($data2 as $item)
+                                <tr align="center">
+                                    <td style="padding: 37px;"><a href="{{url('/remove', $item->id)}}" class="btn btn-primary">Remove</a></td>
+                                </tr>
+                                @endforeach
+
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-mid-12" align="center" style="padding: 10px">
+                            <button class="btn btn-warning" style="color: black; font-weight: 500" type="button" id="order">Order Now</button>
+                        </div>
+
+                        <div id="appear" align="center" style="padding: 10px; display:none;">
+                            <div style="padding: 10px">
+                                <label>Name</label>
+                                <input style="border-radius:20px; height:50px; width:300px; font-size:20px" class="form-control" type="text" name="name" placeholder="Name">
+                            </div>
+
+                            <div style="padding: 10px">
+                                <label>Phone</label>
+                                <input style="border-radius:20px; height:50px; width:300px; font-size:20px" class="form-control" type="text" name="phone" placeholder="Phone Number">
+                            </div>
+
+                            <div style="padding: 10px">
+                                <label>Address</label>
+                                <input style="border-radius:20px; height:50px; width:300px; font-size:20px" class="form-control" type="text" name="address" placeholder="Addresss">
+                            </div>
+
+                            <div style="padding: 10px">
+                                <label for="readonlyInput">Sub Total</label>
+                                <input style="border-radius:20px; height:50px; width:300px; font-size:20px; color: black" class="form-control" type="text" name="sub" id="readonlyInput" readonly>
+                            </div>
+
+                            <div style="padding: 10px">
+                                <input style="color: black; font-weight: 500" class="btn btn-success" type="submit" value="Order Confirm">
+                                <button style="color: black; font-weight: 500" id="close" type="button" class="btn btn-danger">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    @else
 
     <div id="fh5co-about" >
 
-		<div class="row">
-			<div class="col-md-6" style="width: calc(70%);">
-				<table style="margin-top: 30px;" align="right" bgcolor="white">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 curved-row d-flex justify-content-center align-items-center">
 
-					<tr >
-                        <th width="60%" style="padding: 30px; text-align: center;"> Food image </th>
-						<th width="20%" style="padding: 30px;"> Food name </th>
-						<th width="20%" style="padding: 30px;"> Unit Price </th>
-						<th style="padding: 30px;"> Quantity </th>
-                        <th style="padding: 30px;"> Total </th>
+                    <div class="col-md-4 pop-up-panal">
 
-					</tr>
+                        <img style="border-radius: 10px;" src="{{asset('images/cart.jfif')}}" alt=""><br>
 
-                    <form action="{{url('orderconfirm')}}" method="POST">
+                        <h4> NO ITEMS FOUND...!</h4><br>
+                        <p>Looks like you haven't made</p> <br> <p style="margin-top: -30px">your items yet.</p><br>
 
-                    @csrf
+                        <a href="/menu" class="btn btn-primary"> Back to Menu </a>
 
-					@foreach ($data as $data)
-					<tr align="center">
+                    </div>
 
-                        <td style="padding: 10px;">
-                            <img width="40%" height="40%" src="/foodimage/{{$data->image}}" alt="">
-                        </td>
-						<td style="padding: 10px; ">
-                            <input type="text" name="foodname[]" value="{{$data->title}}" hidden="">
-                            {{$data->title}}
-                        </td>
-						<td style="padding: 10px; ">
-                            <input type="text" name="price[]" value="{{$data->price}}" hidden="">
-                            {{$data->price}}$
-                        </td>
-						<td style="padding: 10px; ">
-                            <input type="text" name="quantity[]" value="{{$data->quantity}}" hidden="">
-                            {{$data->quantity}}
-                        </td>
-                        <td style="padding: 10px; ">
-                            <input type="text" name="total[]" value="{{$data->quantity * $data->price}}" hidden="">
-                            {{$data->quantity * $data->price}}$
-                        </td>
-
-					</tr>
-
-					@endforeach
-
-				</table>
-			</div>
-
-			<div class="col-md-6" style="width: calc(30%);">
-				<table style="margin-top: 30px;">
-					<tr><th style="padding: 30px; text-align: center"> Action </th></tr>
-
-					@foreach ($data2 as $data2)
-
-					<tr align="center">
-						<td style="padding: 37px;"><a href="{{url('/remove',$data2->id)}}" class="btn btn-primary" > Remove </a></td>
-					</tr>
-
-					@endforeach
-
-				</table>
-			</div>
-
-		</div>
-
-		<div class="row">
-			<div class="col-mid-12" align="center" style="padding: 10px">
-
-				<button class="btn btn-warning" style="color: black; font-weight: 500" type="button" id="order"> Order Now </button>
-
-			</div>
-
-			<div id="appear" align="center" style="padding: 10px; display:none;">
-
-				<div style="padding: 10px">
-					<label> Name </label>
-					<input style="border-radius:20px; height:50px; width:300px; font-size:20px" class="form-control" type="text" name="name" placeholder="Name">
-				</div>
-
-				<div style="padding: 10px">
-					<label> Phone </label>
-					<input style="border-radius:20px; height:50px; width:300px; font-size:20px" class="form-control" type="text" name="phone" placeholder="Phone Number">
-				</div>
-
-				<div style="padding: 10px">
-					<label> Address </label>
-					<input style="border-radius:20px; height:50px; width:300px; font-size:20px" class="form-control" type="text" name="address" placeholder="Addresss">
-				</div>
-
-                <div style="padding: 10px">
-                    <label for="readonlyInput"> Sub Total </label>
-                    <input style="border-radius:20px; height:50px; width:300px; font-size:20px; color: black" class="form-control" type="text" name="sub" id="readonlyInput" readonly>
                 </div>
 
-				<div style="padding: 10px">
-					<input style="color: black; font-weight: 500" class="btn btn-success" type="submit" value="Order Confirm">
-                    <button style="color: black; font-weight: 500" id="close" type="button" class="btn btn-danger">Close</button>
-				</div>
 
-			</div>
+            </div>
+        </div>
+    </div>
 
-		</div>
 
-    </form>
 
-	</div>
+
+    @endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -395,7 +503,7 @@
 	</script>
 
 
-    <script>
+    {{-- <script>
         document.getElementById('order').addEventListener('click', function() {
             // Show the order confirmation form
             document.getElementById('appear').style.display = 'block';
@@ -415,7 +523,38 @@
             // Hide the order confirmation form
             document.getElementById('appear').style.display = 'none';
         });
-    </script>
+    </script> --}}
+
+
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+    var orderButton = document.getElementById('order');
+    var closeButton = document.getElementById('close');
+    var appearDiv = document.getElementById('appear');
+    var subtotalInput = document.getElementById('readonlyInput');
+
+    function toggleOrderForm() {
+        appearDiv.style.display = (appearDiv.style.display === 'none' || appearDiv.style.display === '') ? 'block' : 'none';
+    }
+
+    function calculateSubtotal() {
+        var totalInputs = document.getElementsByName('total[]');
+        var subtotal = 0;
+        for (var i = 0; i < totalInputs.length; i++) {
+            subtotal += parseFloat(totalInputs[i].value);
+        }
+        subtotalInput.value = subtotal.toFixed(2) + '$';
+    }
+
+    orderButton.addEventListener('click', function() {
+        toggleOrderForm();
+        calculateSubtotal();
+    });
+
+    closeButton.addEventListener('click', toggleOrderForm);
+});
+
+	</script>
 
 
 

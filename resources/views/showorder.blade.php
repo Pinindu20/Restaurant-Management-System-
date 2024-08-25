@@ -123,10 +123,10 @@
 		@keyframes image{
 
 			from{
-				transform: scale(1.25);
+				transform: scale(1);
 			}
 			to{
-				transform: scale(1);
+				transform: scale(0.75);
 			}
 		}
 
