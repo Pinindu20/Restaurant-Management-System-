@@ -12,6 +12,8 @@ use App\Models\Order;
 use App\Models\Table;
 use App\Models\Booking;
 use Carbon\Carbon;
+use Stripe;
+use Illuminate\Support\Facades\Session;
 
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -50,7 +52,6 @@ class HomeController extends Controller
 
         return view("about",compact('count'));
     }
-
 
     public function contact()
     {
@@ -165,26 +166,30 @@ class HomeController extends Controller
 
     }
 
-
     public function showcart(Request $request, $id)
     {
+        $count = cart::where('user_id', $id)->count();
 
-        $count=cart::where('user_id',$id)->count();
+        if (Auth::id() == $id) {
+            $data2 = cart::where('user_id', $id)->get();
+            $data = cart::where('user_id', $id)
+                ->join('food', 'carts.food_id', '=', 'food.id')
+                ->get();
 
-            if(Auth::id()==$id)
-            {
-                $data2=cart::select('*')->where('user_id', '=' , $id)->get();
-
-                $data=cart::where('user_id',$id)->join('food','carts.food_id','=','food.id')->get();
-
-                return view('showcart',compact('count','data','data2'));
+            // Calculate subtotal
+            $total=0;
+            $subtotal = 0;
+            foreach ($data as $item) {
+                $total=($item->quantity * $item->price);
+                $subtotal += $total;
             }
 
-            else
-            {
-                return redirect()->back();
-            }
+            return view('showcart', compact('count', 'data', 'data2', 'subtotal'));
+        } else {
+            return redirect()->back();
+        }
     }
+
 
 
     public function remove($id)
@@ -256,7 +261,6 @@ class HomeController extends Controller
         $check_in = $request->check_in;
         $check_out = $request->check_out;
 
-        // Correct logic to check if the table is already booked in the given time period
         $isBooked = Booking::where('table_id', $id)
             ->where('date', $request->date)
             ->where(function($query) use ($check_in, $check_out) {
@@ -320,5 +324,50 @@ class HomeController extends Controller
         $pdf = Pdf::loadView('pdf',compact('order'));
         return $pdf->download('invoice.pdf');
     }
+
+
+
+
+    public function stripe($subtotal)
+    {
+        return view('stripe', compact('subtotal'));
+    }
+
+
+
+    public function stripePost(Request $request, $subtotal)
+    {
+        Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
+
+        Stripe\Charge::create([
+            "amount" => $subtotal * 100,
+            "currency" => "usd",
+            "source" => $request->stripeToken,
+            "description" => "Test payment from complete"
+        ]);
+
+        foreach ($request->foodname as $key => $foodname) {
+            $data = new Order;
+
+            $data->user_id = auth()->id(); // Associate order with the logged-in user
+            $data->foodname = $foodname;
+            $data->price = $request->price[$key];
+            $data->quantity = $request->quantity[$key];
+            $data->name = $request->name;
+            $data->phone = $request->phone;
+            $data->address = $request->address;
+            $data->payment_status="paid";
+
+
+            $data->save();
+        }
+
+        // Clear the cart details from the database
+        Cart::where('user_id', auth()->id())->delete(); // Assuming 'user_id' is used to associate cart items with the user
+
+        return redirect('showcart');
+    }
+
+
 
 }

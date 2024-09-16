@@ -43,6 +43,7 @@ Route::get("/bill/{id}",[HomeController::class,"print"]);
 
 
 
+
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
@@ -96,3 +97,20 @@ Route::get("/delete_reservation/{id}",[AdminController::class,"delete_reservatio
 Route::get("/approve_book/{id}",[AdminController::class,"approve_book"]);
 
 Route::get("/reject_book/{id}",[AdminController::class,"reject_book"]);
+
+
+
+Route::controller(HomeController::class)->group(function(){
+    Route::get('stripe/{subtotal}', 'stripe');
+    Route::post('stripe/{subtotal}', 'stripePost')->name("stripe.post");
+});
+
+
+// Route::controller(HomeController::class)->group(function(){
+//     Route::get('stripe', 'stripe')->name('stripe');  // Add name for clarity
+//     Route::post('stripe', 'stripePost')->name('stripe.post');
+// });
+
+
+// Route::get("/stripe",[HomeController::class,"stripe"]);
+// Route::get('/stripe/{subtotal}', [HomeController::class, 'stripe']);

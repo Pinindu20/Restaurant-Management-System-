@@ -193,8 +193,8 @@
 								</ul> --}}
 							</li>
 							<li><a href="reservation">Reservation</a></li>
-							<li><a href="about.html">About</a></li>
-							<li><a href="contact.html">Contact</a></li>
+							<li><a href="about">About</a></li>
+							<li><a href="contact">Contact</a></li>
 
                             <li>
                                 @auth
@@ -275,7 +275,18 @@
 
                                 <form action="{{url('orderconfirm')}}" method="POST">
                                     @csrf
+
+                                    @php
+                                        $subtotal = 0;
+                                    @endphp
+
                                     @foreach ($data as $item)
+
+                                    @php
+                                        $total = ($item->quantity * $item->price);
+                                        $subtotal += $total;
+                                    @endphp
+
                                     <tr align="center">
                                         <td style="padding: 10px;">
                                             <img width="40%" height="40%" src="/foodimage/{{$item->image}}" alt="">
@@ -293,12 +304,16 @@
                                             {{$item->quantity}}
                                         </td>
                                         <td style="padding: 10px;">
-                                            <input type="text" name="total[]" value="{{$item->quantity * $item->price}}" hidden="">
-                                            {{$item->quantity * $item->price}}$
+                                            <input type="text" name="total[]" value="{{$total}}" hidden="">
+                                            {{$total}}$
                                         </td>
                                     </tr>
+
                                     @endforeach
+
                             </table>
+
+
                         </div>
 
                         <div class="col-md-6" style="width: calc(30%);">
@@ -342,10 +357,14 @@
                             </div>
 
                             <div style="padding: 10px">
-                                <input style="color: black; font-weight: 500" class="btn btn-success" type="submit" value="Order Confirm">
+                                <input style="color: black; font-weight: 900" class="btn btn-success" type="submit" value="Cash on delivery">
+                                <a style="color: black; font-weight: 900" class="btn btn-success" href="{{ url('stripe', ['subtotal' => $subtotal]) }}"> Pay Using Card </a>
+
+                            </div>
+
+                            <div>
                                 <button style="color: black; font-weight: 500" id="close" type="button" class="btn btn-danger">Close</button>
                             </div>
-                        </div>
                     </div>
                 </form>
             </div>
